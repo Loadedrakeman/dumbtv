@@ -7,7 +7,10 @@ A home screen for Fire TV that does one job: show your apps and your HDMI inputs
 - **No network.** It has no `INTERNET` permission, so Android blocks it from
   opening any network connection. The APK declares usage access, reorder-tasks
   and boot-completed with `android:maxSdkVersion="27"`: Fire OS 6 requests them
-  for the Keeper described below, Fire OS 7/8 does not. Check it yourself:
+  for the Keeper described below, Fire OS 7/8 does not. It also declares
+  `SYSTEM_ALERT_WINDOW` ("display over other apps") on every version: Android 10+
+  aborts the HOME guard's launch without it, and `install.sh` grants it with
+  `appops`. It draws no overlay of its own with it. Check it yourself:
   `aapt2 dump permissions build/dumbtv-home.apk`.
 - **No ads, no "recommended" rows, no account, no analytics, no update checks.**
 
@@ -42,7 +45,7 @@ install/delete. Measured on an Onida Fire TV Edition (Fire OS 7.7, 1.4 GB RAM):
 | | dumbtv home | Projectivy 4.72 |
 |---|---|---|
 | APK | 45 KB | several MB |
-| Permissions requested | 0 (Fire OS 7/8); usage access (Fire OS 6) | 20+, incl. advertising ID |
+| Permissions requested | 1, overlay (Fire OS 7/8); plus usage access (Fire OS 6) | 20+, incl. advertising ID |
 | RAM, home on screen | 57–72 MB PSS | 135 MB PSS |
 | RAM, while an app plays | ~37 MB PSS | — |
 | HOME → home screen | 0.16–0.25 s | 3–6 s, Amazon's home shows first |

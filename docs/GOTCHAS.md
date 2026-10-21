@@ -215,13 +215,17 @@ Advanced settings > Configure filter update, add
 the rest, reboot. The routing tweaks (`detectDNS = false`, `routeIPs`) cannot be set this
 way. `verify.sh` skips the list count there and relies on the blocked-host lookups.
 
-**HOME does not move to dumbtv home yet.** Android 11 blocks the Guard's alarm-fired
-launch as a background activity start (logcat: `Background activity start ...
-callingUidHasAnyVisibleWindow: false`). The service is bound, so `verify.sh` reports it
-as bound; press HOME to see the truth. Android's documented way past this is the
-"display over other apps" permission (`SYSTEM_ALERT_WINDOW`), which the launcher does
-not declare. Adding it is open: it would end the launcher's no-permissions rule, and it
-needs testing on a Fire OS 8 device.
+**HOME needs the overlay app-op.** Android 11 blocks the Guard's alarm-fired launch as a
+background activity start (logcat: `Background activity start ...
+callingUidHasAnyVisibleWindow: false`, then `Abort background activity starts`). The
+service is still bound, so `verify.sh` reports it as bound; press HOME to see the truth.
+The launcher declares `SYSTEM_ALERT_WINDOW` and `install.sh` grants it with
+`appops set tv.dumbtv.home SYSTEM_ALERT_WINDOW allow`; logcat then says `Background
+activity start for tv.dumbtv.home allowed because SYSTEM_ALERT_WINDOW permission is
+granted`. The app-op does not stick on an APK that does not declare the permission (it
+reads back `default`), so an older build needs replacing, not just the grant. Tested on a
+Fire TV Stick 4K Plus (AFTMA08C15, Fire OS 8): HOME from an app, HOME after a reboot and
+the physical remote all land on dumbtv home, and Settings still opens.
 
 **`com.amazon.dummy.settings` and `com.android.traceur` come back enabled after a
 reboot.** Re-run `debloat.sh` after a reboot to switch them off again.

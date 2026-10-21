@@ -80,6 +80,7 @@ if [[ $mode == undo ]]; then
   # force-stop also keeps the Fire OS 6 Keeper from restarting at the next boot.
   sh_ am force-stop $PKG >/dev/null 2>&1 || true
   sh_ appops set $PKG GET_USAGE_STATS default >/dev/null 2>&1 || true
+  sh_ appops set $PKG SYSTEM_ALERT_WINDOW default >/dev/null 2>&1 || true
   set_futurity off
   set_guard ""
   sh_ am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null
@@ -148,6 +149,9 @@ if [[ $dev_sdk -lt 28 ]]; then
 fi
 
 sh_ cmd package set-home-activity $PKG/.Home >/dev/null 2>&1 || true
+# Android 10+ (Fire OS 8) aborts the Guard's alarm-fired launch as a background activity
+# start unless the app holds the overlay app-op. It only sticks when the APK declares it.
+sh_ appops set $PKG SYSTEM_ALERT_WINDOW allow >/dev/null 2>&1 || true
 set_futurity on
 set_guard $GUARD
 sleep 2
